@@ -141,8 +141,11 @@
 </template>
 
 <script>
-import { request } from "./lib/datocms";
+import { request, gql, imageFields, seoMetaTagsFields } from "./lib/datocms";
 import { toHead } from "vue-datocms";
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+
 
 export default {
   name: "App",
@@ -194,6 +197,25 @@ export default {
               }
             }
           }
+          posts: allPosts(first: 10, orderBy: _firstPublishedAt_DESC) {
+            id
+            title
+            slug
+            publicationDate: _firstPublishedAt
+            excerpt
+            coverImage {
+              responsiveImage(imgixParams: { fit: crop, ar: "16:9", w: 860 }) {
+                ...imageFields
+              }
+            }
+            author {
+              name
+              picture {
+                responsiveImage(imgixParams: { fit: crop, ar: "1:1", w: 40 }) {
+                  ...imageFields
+                }
+              }
+            }
           theme {
             color
             backgroundImage {

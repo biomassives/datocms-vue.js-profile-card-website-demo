@@ -1,14 +1,20 @@
 import axios from 'axios'
+import gql from 'graphql-tag'
 
 export async function request({ query, variables, preview }) {
   const endpoint = preview
     ? `https://graphql.datocms.com/preview`
     : `https://graphql.datocms.com/`
 
+
+  if (preview) {
+    endpoint += '/preview';
+  }
+
   const { data } = await axios.post(
     endpoint,
     {
-      query,
+      query: query.loc && query.loc.source.body,
       variables
     },
     {
@@ -25,3 +31,26 @@ export async function request({ query, variables, preview }) {
 
   return data.data;
 }
+
+export const imageFields = gql`
+  fragment imageFields on ResponsiveImage {
+    aspectRatio
+    base64
+    height
+    sizes
+    src
+    srcSet
+    webpSrcSet
+    width
+    alt
+    title
+  }
+`;
+
+export const seoMetaTagsFields = gql`
+  fragment seoMetaTagsFields on Tag {
+    attributes
+    content
+    tag
+  }
+`;
